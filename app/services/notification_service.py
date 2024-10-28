@@ -6,10 +6,21 @@ from sqlalchemy.orm import Session
 from app.models.ingredient import Ingredient
 from app.models.user import User
 import os
+import json
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("/home/ubuntu/food_app/backend/firebase_admin_sdk.json")
-firebase_admin.initialize_app(cred)
+firebase_creds = os.getenv('FIREBASE_CREDENTIALS')
+firebase_initialized = False
+
+if firebase_creds:
+    try:
+        cred = credentials.Certificate(json.loads(firebase_creds))
+        firebase_admin.initialize_app(cred)
+        firebase_initialized = True
+    except Exception as e:
+        print(f"Warning: Failed to initialize Firebase: {str(e)}")
+else:
+    print("Warning: Firebase credentials not found. Notifications will not work.")
 
 def check_expiring_ingredients(db: Session):
     # Get all ingredients from the database
@@ -28,6 +39,10 @@ def check_expiring_ingredients(db: Session):
                 send_expiration_notification(db, ingredient, days_until_expiration)
 
 def send_expiration_notification(db: Session, ingredient: Ingredient, days_until_expiration: int):
+    if not firebase_initialized:
+        print(f"Notification would be sent: {ingredient.name} will expire in {days_until_expiration} days.")
+        return
+
     # Get the user associated with this ingredient
     user = db.query(User).filter(User.id == ingredient.user_id).first()
 
