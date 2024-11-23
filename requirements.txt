@@ -68,10 +68,10 @@ psycopg2-binary==2.9.9
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22
-pydantic==1.10.7
-pydantic-extra-types==1.10.7
+pydantic==1.10.12
+pydantic-extra-types==1.10.12
 pydantic-settings==1.2.0
-pydantic_core==1.10.7
+pydantic_core==1.10.12
 pyee==11.0.1
 Pygments==2.18.0
 PyJWT==2.9.0
